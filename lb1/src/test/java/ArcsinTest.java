@@ -1,4 +1,9 @@
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,12 +17,19 @@ public class ArcsinTest {
     private static final double TAYLOR_MEM_2 = 0.5208333333333334;
     private static final double TAYLOR_MEM_3 = 0.5231770833333333;
 
-    @Test
-    public void testSeriesForXZero() {
-        double x = 0.0;
-        for (int n = 1; n <= 5; n++) {
-            assertEquals(0.0, Arcsin.series(x, n), DELTA);
-        }
+    @ParameterizedTest
+    @MethodSource("xValuesForZeroTest")
+    public void testSeriesForXZero(double x, int n) {
+        assertEquals(0.0, Arcsin.series(x, n), DELTA);
+    }
+
+    private static Stream<Arguments> xValuesForZeroTest() {
+        return Stream.of(
+                Arguments.of(0.0, 1),
+                Arguments.of(0.0, 3),
+                Arguments.of(0.0, 5),
+                Arguments.of(0.0, 100)
+        );
     }
 
     @Test
@@ -53,18 +65,31 @@ public class ArcsinTest {
         assertEquals(TAYLOR_MEM_3, Arcsin.series(x, 3), DELTA);
     }
 
-    @Test
-    public void testSeriesForNegativeXSmallN() {
-        double x = -TAYLOR_MEM_1;
-        assertEquals(x, Arcsin.series(x, 1), DELTA);
-        assertEquals(-TAYLOR_MEM_2, Arcsin.series(x, 2), DELTA);
-        assertEquals(-TAYLOR_MEM_3, Arcsin.series(x, 3), DELTA);
+    @ParameterizedTest
+    @MethodSource("xValuesForNegativeXSmallNTest")
+    public void testSeriesForNegativeXSmallN(double x, int n, double expected) {
+        assertEquals(expected, Arcsin.series(x, n), DELTA);
     }
 
-    @Test
-    public void testIllegalArgument() {
-        assertThrows(IllegalArgumentException .class, () ->Arcsin.series(2, 1));
-        assertThrows(IllegalArgumentException .class, () ->Arcsin.series(-2, 1));
+    private static Stream<Arguments> xValuesForNegativeXSmallNTest() {
+        return Stream.of(
+                Arguments.of(-TAYLOR_MEM_1, 1, -TAYLOR_MEM_1),
+                Arguments.of(-TAYLOR_MEM_1, 2, -TAYLOR_MEM_2),
+                Arguments.of(-TAYLOR_MEM_1, 3, -TAYLOR_MEM_3)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideIllegalArguments")
+    public void testIllegalArgument(double x, int n) {
+        assertThrows(IllegalArgumentException.class, () -> Arcsin.series(x, n));
+    }
+
+    private static Stream<Arguments> provideIllegalArguments() {
+        return Stream.of(
+                Arguments.of(2.0, 1),
+                Arguments.of(-2.0, 1)
+        );
     }
 
 
