@@ -19,7 +19,7 @@ public class ArcsinTest {
 
     @ParameterizedTest
     @MethodSource("xValuesForZeroTest")
-    public void testSeriesForXZero(double x, int n) {
+    public void testForXZero(double x, int n) {
         assertEquals(0.0, Arcsin.series(x, n), DELTA);
     }
 
@@ -33,14 +33,14 @@ public class ArcsinTest {
     }
 
     @Test
-    public void testSeriesForXOneLargeN() {
+    public void testForXOneLargeN() {
         double x = 1.0;
         double result = Arcsin.series(x, 200);
         assertEquals(HALF_PI, result, 0.1);
     }
 
     @Test
-    public void testSeriesForXMinusOneLargeN() {
+    public void testForXMinusOneLargeN() {
         double x = -1.0;
         double result = Arcsin.series(x, 200);
         assertTrue(result > -PI/2);
@@ -48,7 +48,7 @@ public class ArcsinTest {
     }
 
     @Test
-    public void testSeriesForXNearOne() {
+    public void testForXNearOne() {
         double x = 0.99;
         double result = Arcsin.series(x, 100);
         assertEquals(NEAR_ONE, result, 0.01);
@@ -56,7 +56,7 @@ public class ArcsinTest {
 
 
     @Test
-    public void testSeriesForPositiveXSmallN() {
+    public void testForPositiveXSmallN() {
         double x = TAYLOR_MEM_1;
         assertEquals(x, Arcsin.series(x, 1), DELTA);
         //x + 1/6*x^3
@@ -66,12 +66,12 @@ public class ArcsinTest {
     }
 
     @ParameterizedTest
-    @MethodSource("xValuesForNegativeXSmallNTest")
-    public void testSeriesForNegativeXSmallN(double x, int n, double expected) {
+    @MethodSource("xValuesForNegativeXSmallN")
+    public void testsForNegativeXSmallN(double x, int n, double expected) {
         assertEquals(expected, Arcsin.series(x, n), DELTA);
     }
 
-    private static Stream<Arguments> xValuesForNegativeXSmallNTest() {
+    private static Stream<Arguments> xValuesForNegativeXSmallN() {
         return Stream.of(
                 Arguments.of(-TAYLOR_MEM_1, 1, -TAYLOR_MEM_1),
                 Arguments.of(-TAYLOR_MEM_1, 2, -TAYLOR_MEM_2),
@@ -80,12 +80,12 @@ public class ArcsinTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIllegalArguments")
+    @MethodSource("illegalArguments")
     public void testIllegalArgument(double x, int n) {
         assertThrows(IllegalArgumentException.class, () -> Arcsin.series(x, n));
     }
 
-    private static Stream<Arguments> provideIllegalArguments() {
+    private static Stream<Arguments> illegalArguments() {
         return Stream.of(
                 Arguments.of(2.0, 1),
                 Arguments.of(-2.0, 1)
