@@ -36,7 +36,7 @@ public class SelectionSortTest {
     @Test
     public void testSortWithSingleElementArray() {
         int[] array = {10};
-        int[] expected = {12};
+        int[] expected = {10};
         SelectionSort.sort(array);
         assertArrayEquals(expected, array);
     }
